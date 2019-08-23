@@ -1,5 +1,8 @@
 {
-    "/js/bootstrap.bundle.min.js": "/js/bootstrap.bundle.min.js",
+    "/css/all.css": "/css/all.css",
     "/js/jquery.min.js": "/js/jquery.min.js",
-    "/css/all.css": "/css/all.css"
+    "/js/bootstrap.bundle.min.js": "/js/bootstrap.bundle.min.js",
+    "/js/fastclick.js": "/js/fastclick.js",
+    "/js/adminlte.js": "/js/adminlte.js",
+    "/js/demo.js": "/js/demo.js"
 }

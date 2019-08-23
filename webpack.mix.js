@@ -14,7 +14,13 @@ const mix = require('laravel-mix');
 //mix.js('resources/js/app.js', 'public/js')
 //   .sass('resources/sass/app.scss', 'public/css');
 mix.styles([
-   'node_modules/admin-lte/dist/css/adminlte.css'
+   'node_modules/admin-lte/dist/css/adminlte.css',
+   'node_modules/@fortawesome/fontawesome-free/css/all.css'
 ], 'public/css/all.css');
-mix.js('node_modules/admin-lte/plugins/jquery/jquery.min.js', 'public/js')
-mix.js('node_modules/admin-lte/plugins/bootstrap/js/bootstrap.bundle.min.js', 'public/js')
+mix.copy('node_modules/admin-lte/plugins/jquery/jquery.min.js', 'public/js');
+mix.copy('node_modules/admin-lte/plugins/bootstrap/js/bootstrap.bundle.min.js', 'public/js');
+mix.copy('node_modules/admin-lte/plugins/fastclick/fastclick.js', 'public/js');
+mix.copy('node_modules/admin-lte/dist/js/adminlte.js', 'public/js');
+mix.copy('node_modules/admin-lte/dist/js/demo.js', 'public/js');
+mix.copyDirectory('node_modules/admin-lte/dist/img', 'public/img');
+mix.copyDirectory('node_modules/@fortawesome/fontawesome-free/webfonts', 'public/webfonts');
