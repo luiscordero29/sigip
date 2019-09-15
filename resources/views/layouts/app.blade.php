@@ -180,7 +180,7 @@
                     <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
                         <!-- Add icons to the links using the .nav-icon class
                             with font-awesome or any other icon font library -->
-                        <li class="nav-item has-treeview">
+                        <li id="menu-division-politica" class="nav-item has-treeview">
                             <a href="#" class="nav-link">
                               	<i class="nav-icon fas fa-folder"></i>
                               	<p>
@@ -189,19 +189,19 @@
                               	</p>
                             </a>
                             <ul class="nav nav-treeview">
-                              	<li class="nav-item">
-									<a href="{{ url('regions') }}" class="nav-link">
+                              	<li id="item-regiones" class="nav-item">
+									<a href="{{ url('region') }}" class="nav-link">
 										<i class="far fa-circle nav-icon"></i>
 										<p>Regiones</p>
 									</a>
                               	</li>
-                              	<li class="nav-item">
+                              	<li id="item-provincias" class="nav-item">
 									<a href="../../index2.html" class="nav-link">
 										<i class="far fa-circle nav-icon"></i>
 										<p>Provincias</p>
 									</a>
                               	</li>
-                              	<li class="nav-item">
+                              	<li id="item-distritos" class="nav-item">
 									<a href="../../index3.html" class="nav-link">
 										<i class="far fa-circle nav-icon"></i>
 										<p>Distritos</p>
@@ -665,7 +665,8 @@
     <!-- AdminLTE App -->
     <script src="{{ asset('js/adminlte.min.js') }}"></script>
     <!-- AdminLTE for demo purposes -->
-    <script src="{{ asset('js/demo.js') }}"></script>
+	<script src="{{ asset('js/demo.js') }}"></script>
+	@yield('scripts')
 </body>
 </html>
 

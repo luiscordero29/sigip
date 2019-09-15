@@ -18,6 +18,7 @@ class RegionToRegions extends Seeder
         foreach ($regions as $region) {
             $record = new Region;
             $record->user_id = $user->id;
+            $record->id = $region->id_region;
             $record->description = $region->descripcion;
             $record->status = $region->reg_activo;
             $record->save();

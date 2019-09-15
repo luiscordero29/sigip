@@ -14,6 +14,7 @@ class TableRegions extends Migration
     public function up()
     {
         Schema::create('regions', function (Blueprint $table) {
+            $table->bigInteger('id')->nullable();
             $table->uuid('region_id')->unique();
             $table->uuid('user_id');
             $table->string('description');
