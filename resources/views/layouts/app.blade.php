@@ -196,7 +196,7 @@
 									</a>
                               	</li>
                               	<li id="item-provincias" class="nav-item">
-									<a href="../../index2.html" class="nav-link">
+									<a href="{{ url('province') }}" class="nav-link">
 										<i class="far fa-circle nav-icon"></i>
 										<p>Provincias</p>
 									</a>

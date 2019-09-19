@@ -6,8 +6,9 @@ use Illuminate\Http\Request;
 use App\Region;
 use App\Province;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
-class RegionController extends Controller
+class ProvinceController extends Controller
 {
     /**
      * Create a new controller instance.
@@ -26,7 +27,7 @@ class RegionController extends Controller
      */
     public function index()
     {
-        return view('region/index');
+        return view('province/index');        
     }
 
     /**
@@ -36,7 +37,12 @@ class RegionController extends Controller
      */
     public function json()
     {
-        return datatables()->of(Region::where('status', true)->get())->toJson();
+        return datatables()->query(
+            DB::table('provinces')
+                ->select('provinces.*', 'regions.description as region')
+                ->where('provinces.status', true)
+                ->join('regions', 'regions.region_id', '=', 'provinces.region_id')
+        )->toJson();
     }
 
     /**
@@ -46,7 +52,8 @@ class RegionController extends Controller
      */
     public function create()
     {
-        return view('region/create');
+        $data['region'] = Region::orderBy('description', 'asc')->get()->pluck('description', 'region_id');
+        return view('province/create', ['data' => $data]);
     }
 
     /**
@@ -58,25 +65,39 @@ class RegionController extends Controller
     public function store(Request $request)
     {
         $request->validate([
+            'region_id' => 'required',
             'description' => 'required|max:255',
+            'observation' => 'max:255',
         ],[
+            'region_id.required' => 'El campo Región es obligatorio.',
             'description.required' => 'El campo descripción es obligatorio.',
             'description.max' => [
                 'numeric' => 'El campo descripción no debe ser mayor a :max.',
                 'file'    => 'El archivo descripción no debe pesar más de :max kilobytes.',
                 'string'  => 'El campo descripción no debe contener más de :max caracteres.',
                 'array'   => 'El campo descripción no debe contener más de :max elementos.',
+            ],
+            'observation.required' => 'El campo observación es obligatorio.',
+            'observation.max' => [
+                'numeric' => 'El campo observación no debe ser mayor a :max.',
+                'file'    => 'El archivo observación no debe pesar más de :max kilobytes.',
+                'string'  => 'El campo observación no debe contener más de :max caracteres.',
+                'array'   => 'El campo observación no debe contener más de :max elementos.',
             ]
         ]);
         # Request
+        $region_id = $request->input('region_id');
         $description = $request->input('description');
+        $observation = $request->input('observation');
         # Create
-        $record = New Region;
+        $record = New Province;
         $record->user_id = Auth::id();
+        $record->region_id = $region_id;
         $record->description = $description;
+        $record->observation = $observation;
         $record->status = 1;
         $record->save();
-        return redirect('/region/create')->with('success', 'Registro Guardado');
+        return redirect('/province/create')->with('success', 'Registro Guardado');
     }
 
     /**
@@ -87,14 +108,14 @@ class RegionController extends Controller
      */
     public function show($id)
     {
-        $count = Region::where('region_id', $id)->count();
+        $count = Province::where('province_id', $id)->count();
         if ($count>0) {
             # Show
-            $data['row'] = Region::where('region_id', $id)->first();
-            return view('region.show', ['data' => $data]);
+            $data['row'] = Province::where('province_id', $id)->first();
+            return view('province.show', ['data' => $data]);
         }else{
             # Error
-            return redirect('/region')->with('info', 'No se puede editar el registro');
+            return redirect('/province')->with('info', 'No se puede editar el registro');
         }
     }
 
@@ -106,14 +127,15 @@ class RegionController extends Controller
      */
     public function edit($id)
     {
-        $count = Region::where('region_id', $id)->count();
+        $count = Province::where('province_id', $id)->count();
         if ($count>0) {
             # Edit
-            $data['row'] = Region::where('region_id', $id)->first();
-            return view('region.edit', ['data' => $data]);
+            $data['region'] = Region::orderBy('description', 'asc')->get()->pluck('description', 'region_id');
+            $data['row'] = Province::where('province_id', $id)->first();
+            return view('province.edit', ['data' => $data]);
         }else{
             # Error
-            return redirect('/region')->with('info', 'No se puede editar el registro');
+            return redirect('/province')->with('info', 'No se puede editar el registro');
         }
     }
 
@@ -127,8 +149,11 @@ class RegionController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'description' => ['required', 'max:255'],
+            'region_id' => 'required',
+            'description' => 'required|max:255',
+            'observation' => 'required|max:255',
         ],[
+            'region_id.required' => 'El campo Región es obligatorio.',
             'description.required' => 'El campo descripción es obligatorio.',
             'description.max' => [
                 'numeric' => 'El campo descripción no debe ser mayor a :max.',
@@ -136,21 +161,32 @@ class RegionController extends Controller
                 'string'  => 'El campo descripción no debe contener más de :max caracteres.',
                 'array'   => 'El campo descripción no debe contener más de :max elementos.',
             ],
+            'observation.required' => 'El campo observación es obligatorio.',
+            'observation.max' => [
+                'numeric' => 'El campo observación no debe ser mayor a :max.',
+                'file'    => 'El archivo observación no debe pesar más de :max kilobytes.',
+                'string'  => 'El campo observación no debe contener más de :max caracteres.',
+                'array'   => 'El campo observación no debe contener más de :max elementos.',
+            ]
         ]);
-        $count = Region::where('region_id', $id)->count();
+        $count = Province::where('province_id', $id)->count();
         if ($count>0) {
             # Request
+            $region_id = $request->input('region_id');
             $description = $request->input('description');
+            $observation = $request->input('observation');
             # Update
-            $record = Region::where('region_id', $id)->first();
+            $record = Province::where('province_id', $id)->first();
             $record->user_id = Auth::id();
+            $record->region_id = $region_id;
             $record->description = $description;
+            $record->observation = $observation;
             $record->status = 1;
             $record->save();
-            return redirect('/region/edit/'.$id)->with('success', 'Registro Guardado');
+            return redirect('/province/edit/'.$id)->with('success', 'Registro Guardado');
         }else{
             # Error
-            return redirect('/region')->with('info', 'No se puede Editar el registro');
+            return redirect('/province')->with('info', 'No se puede Editar el registro');
         }
     }
 
@@ -162,11 +198,10 @@ class RegionController extends Controller
      */
     public function destroy($id)
     {
-        $count = Region::where('region_id', $id)->count();
+        $count = Province::where('province_id', $id)->count();
         if ($count>0) {
             # Destroy
-            Region::where('region_id', $id)->update(['status' => false]);
-            Province::where('region_id', $id)->update(['status' => false]);
+            Province::where('province_id', $id)->update(['status' => false]);
             return response()->json([
                 'status' => '1',
                 'msg' => 'success'

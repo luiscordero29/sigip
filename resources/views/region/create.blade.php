@@ -47,13 +47,11 @@
                         @endif
                     </div>
                 </div>
-                <div class="form-group mb-0 justify-content-end row">
-                    <div class="col-9">
-                        <button id="btn-submit" type="button" class="btn btn-primary"><i class="fa fa-save"></i> Guardar</button>
-                        <a href="{{ url('region') }}" class="btn btn-default"><i class="fa fa-undo"></i> Cancelar</a>
-                    </div>
-                </div>
             {!! Form::close() !!}
+        </div>
+        <div class="card-footer">
+            <button id="btn-submit" type="button" class="btn btn-info"><i class="fa fa-save"></i> Guardar</button>
+            <a href="{{ url('region') }}" class="btn btn-default float-right"><i class="fa fa-undo"></i> Cancelar</a>
         </div>
         <!-- /.card-body -->
     </div>

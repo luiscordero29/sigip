@@ -5,13 +5,13 @@
     <div class="container-fluid">
         <div class="row mb-2">
             <div class="col-sm-6">
-                <h1>Regiones</h1>
+                <h1>Provincias</h1>
             </div>
             <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
                     <li class="breadcrumb-item"><a href="{{ url('/home') }}">Dashboard</a></li>
-                    <li class="breadcrumb-item"><a href="{{ url('/region') }}">Regiones</a></li>
-                    <li class="breadcrumb-item active">Editar Región</li>
+                    <li class="breadcrumb-item"><a href="{{ url('/region') }}">Provincias</a></li>
+                    <li class="breadcrumb-item active">Editar Provincia</li>
                 </ol>
             </div>
         </div>
@@ -24,18 +24,29 @@
     <div class="card">
         <div class="card-header">
             <div class="row">
-                <h3 class="card-title">Editar Región</h3>
+                <h3 class="card-title">Editar Provincia</h3>
             </div>
         </div>
         <div class="card-body">
             @include('layouts.alerts')
             {!! Form::open([
                 'method'=>'PUT',
-                'url' => ['/region/update', $data['row']->region_id],
+                'url' => ['/province/update', $data['row']->province_id],
                 'class' => 'form-horizontal',
                 'role' => 'form',
                 'id' => 'form',
                 ]) !!}
+                <div class="form-group row mb-3 ">
+                    {!! Form::label('region_id', 'Región', ['class' => 'col-3 col-form-label']) !!}
+                    <div class="col-9">
+                        {!! Form::select('region_id', $data['region'], $data['row']->region_id, ['placeholder' => 'Seleccione...', 'class' => 'form-control select2']) !!}
+                        @if ($errors->has('region_id'))
+                            <div class="invalid-feedback">
+                                {{ $errors->first('region_id') }}</li>
+                            </div>
+                        @endif
+                    </div>
+                </div>
                 <div class="form-group row mb-3 ">
                     {!! Form::label('description', 'Descripción', ['class' => 'col-3 col-form-label']) !!}
                     <div class="col-9">
@@ -47,11 +58,22 @@
                         @endif
                     </div>
                 </div>
+                <div class="form-group row mb-3 ">
+                    {!! Form::label('observation', 'Observación', ['class' => 'col-3 col-form-label']) !!}
+                    <div class="col-9">
+                        {!! Form::text('observation', $data['row']->observation, ['class' => 'form-control', 'placeholder' => 'Observación']) !!}
+                        @if ($errors->has('observation'))
+                            <div class="invalid-feedback">
+                                {{ $errors->first('observation') }}</li>
+                            </div>
+                        @endif
+                    </div>
+                </div>
             {!! Form::close() !!}
         </div>
         <div class="card-footer">
             <button id="btn-submit" type="button" class="btn btn-info"><i class="fa fa-save"></i> Guardar</button>
-            <a href="{{ url('region') }}" class="btn btn-default float-right"><i class="fa fa-undo"></i> Cancelar</a>
+            <a href="{{ url('province') }}" class="btn btn-default float-right"><i class="fa fa-undo"></i> Cancelar</a>
         </div>
         <!-- /.card-body -->
     </div>
@@ -63,10 +85,15 @@
 @section('scripts')
     <!-- DataTables -->
     <script src="{{ asset('js/sweetalert2.all.min.js') }}"></script>
+    <script src="{{ asset('js/select2.full.min.js') }}"></script>
     <script>
         $(document).ready(function() {
             $('#menu-division-politica').addClass('menu-open');
-            $('#item-regiones a').addClass('active');
+            $('#item-provincias a').addClass('active');
+            $('.select2').select2({
+                theme: 'bootstrap4',
+            });
+            $('#region_id').val('{{ $data["row"]->region_id }}').trigger('change');
             // Save button
             $('#btn-submit').on('click', function() {
                 submit();
@@ -96,8 +123,14 @@
                     }
                 });
             }
+            @if($errors->has('region_id')) 
+                $('#region_id').addClass('is-invalid'); 
+            @endif
             @if($errors->has('description')) 
                 $('#description').addClass('is-invalid'); 
+            @endif
+            @if($errors->has('observation')) 
+                $('#observation').addClass('is-invalid'); 
             @endif
         });
     </script>

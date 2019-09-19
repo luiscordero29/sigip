@@ -5,8 +5,8 @@
     "/js/fastclick.js": "/js/fastclick.js",
     "/js/jquery.dataTables.js": "/js/jquery.dataTables.js",
     "/js/dataTables.bootstrap4.js": "/js/dataTables.bootstrap4.js",
+    "/js/select2.full.min.js": "/js/select2.full.min.js",
     "/js/sweetalert2.all.min.js": "/js/sweetalert2.all.min.js",
     "/js/adminlte.js": "/js/adminlte.js",
-    "/js/demo.js": "/js/demo.js",
-    "/js/Spanish.json": "/js/Spanish.json"
+    "/js/demo.js": "/js/demo.js"
 }
