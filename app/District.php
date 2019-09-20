@@ -5,9 +5,9 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use Webpatser\Uuid\Uuid;
 
-class Region extends Model
+class District extends Model
 {
-    protected $primaryKey = 'region_id';
+    protected $primaryKey = 'district_id';
     public $incrementing = false;
     
     /**
@@ -15,7 +15,7 @@ class Region extends Model
      *
      * @var string
      */
-    protected $table = 'regions';
+    protected $table = 'districts';
 
     /**
      *  Setup model event hooks
@@ -24,8 +24,16 @@ class Region extends Model
     {
         parent::boot();
         self::creating(function ($model) {
-            $model->region_id = (string) Uuid::generate(4);
+            $model->district_id = (string) Uuid::generate(4);
         });
+    }
+
+    /**
+     * One To One - Field
+     */
+    public function province()
+    {
+        return $this->hasOne('App\Province', 'province_id', 'province_id');
     }
 
     /**

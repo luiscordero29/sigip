@@ -14,5 +14,6 @@ class DatabaseSeeder extends Seeder
         $this->call(UsersTableSeeder::class);
         $this->call(RegionToRegions::class);
         $this->call(ProvinciaToProvinces::class);
+        $this->call(DistritoToDistricts::class);
     }
 }
