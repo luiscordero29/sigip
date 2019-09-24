@@ -36,3 +36,13 @@ Route::get('/province/show/{id}', 'ProvinceController@show');
 Route::get('/province/edit/{id}', 'ProvinceController@edit');
 Route::put('/province/update/{id}', 'ProvinceController@update');
 Route::delete('/province/destroy/{id}', 'ProvinceController@destroy');
+Route::get('/province/getRegionById/{id}', 'ProvinceController@getRegionById');
+# Mantenedor de Distritos
+Route::get('/district', 'DistrictController@index');
+Route::get('/district/json', 'DistrictController@json');
+Route::get('/district/create', 'DistrictController@create');
+Route::post('/district/store', 'DistrictController@store');
+Route::get('/district/show/{id}', 'DistrictController@show');
+Route::get('/district/edit/{id}', 'DistrictController@edit');
+Route::put('/district/update/{id}', 'DistrictController@update');
+Route::delete('/district/destroy/{id}', 'DistrictController@destroy');

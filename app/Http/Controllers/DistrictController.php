@@ -3,13 +3,13 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Region;
-use App\Province;
 use App\District;
+use App\Province;
+use App\Region;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
-class ProvinceController extends Controller
+class DistrictController extends Controller
 {
     /**
      * Create a new controller instance.
@@ -28,7 +28,7 @@ class ProvinceController extends Controller
      */
     public function index()
     {
-        return view('province/index');        
+        return view('district/index');        
     }
 
     /**
@@ -39,9 +39,10 @@ class ProvinceController extends Controller
     public function json()
     {
         return datatables()->query(
-            DB::table('provinces')
-                ->select('provinces.*', 'regions.description as region')
-                ->where('provinces.status', true)
+            DB::table('districts')
+                ->select('districts.*', 'provinces.description as province', 'regions.description as region')
+                ->where('districts.status', true)
+                ->join('provinces', 'provinces.province_id', '=', 'districts.province_id')
                 ->join('regions', 'regions.region_id', '=', 'provinces.region_id')
         )->toJson();
     }
@@ -54,7 +55,7 @@ class ProvinceController extends Controller
     public function create()
     {
         $data['region'] = Region::where('status', true)->orderBy('description', 'asc')->get()->pluck('description', 'region_id');
-        return view('province/create', ['data' => $data]);
+        return view('district/create', ['data' => $data]);
     }
 
     /**
@@ -67,10 +68,12 @@ class ProvinceController extends Controller
     {
         $request->validate([
             'region_id' => 'required',
+            'province_id' => 'required',
             'description' => 'required|max:255',
             'observation' => 'max:255',
         ],[
             'region_id.required' => 'El campo Región es obligatorio.',
+            'province_id.required' => 'El campo Provincia es obligatorio.',
             'description.required' => 'El campo descripción es obligatorio.',
             'description.max' => [
                 'numeric' => 'El campo descripción no debe ser mayor a :max.',
@@ -87,18 +90,18 @@ class ProvinceController extends Controller
             ]
         ]);
         # Request
-        $region_id = $request->input('region_id');
+        $province_id = $request->input('province_id');
         $description = $request->input('description');
         $observation = $request->input('observation');
         # Create
-        $record = New Province;
+        $record = New District;
         $record->user_id = Auth::id();
-        $record->region_id = $region_id;
+        $record->province_id = $province_id;
         $record->description = $description;
         $record->observation = $observation;
         $record->status = 1;
         $record->save();
-        return redirect('/province/create')->with('success', 'Registro Guardado');
+        return redirect('/district/create')->with('success', 'Registro Guardado');
     }
 
     /**
@@ -109,14 +112,14 @@ class ProvinceController extends Controller
      */
     public function show($id)
     {
-        $count = Province::where([['province_id', $id], ['status', true]])->count();
+        $count = District::where([['district_id', $id], ['status', true]])->count();
         if ($count>0) {
             # Show
-            $data['row'] = Province::where('province_id', $id)->first();
-            return view('province.show', ['data' => $data]);
+            $data['row'] = District::where('district_id', $id)->first();
+            return view('district.show', ['data' => $data]);
         }else{
             # Error
-            return redirect('/province')->with('info', 'No se puede editar el registro');
+            return redirect('/district')->with('info', 'No se puede editar el registro');
         }
     }
 
@@ -128,15 +131,15 @@ class ProvinceController extends Controller
      */
     public function edit($id)
     {
-        $count = Province::where([['province_id', $id], ['status', true]])->count();
+        $count = District::where([['district_id', $id], ['status', true]])->count();
         if ($count>0) {
             # Edit
-            $data['region'] = Region::orderBy('description', 'asc')->get()->pluck('description', 'region_id');
-            $data['row'] = Province::where('province_id', $id)->first();
-            return view('province.edit', ['data' => $data]);
+            $data['region'] = Region::where('status', true)->orderBy('description', 'asc')->get()->pluck('description', 'region_id');
+            $data['row'] = District::where('district_id', $id)->first();
+            return view('district.edit', ['data' => $data]);
         }else{
             # Error
-            return redirect('/province')->with('info', 'No se puede editar el registro');
+            return redirect('/district')->with('info', 'No se puede editar el registro');
         }
     }
 
@@ -151,10 +154,12 @@ class ProvinceController extends Controller
     {
         $request->validate([
             'region_id' => 'required',
+            'province_id' => 'required',
             'description' => 'required|max:255',
-            'observation' => 'required|max:255',
+            'observation' => 'max:255',
         ],[
             'region_id.required' => 'El campo Región es obligatorio.',
+            'province_id.required' => 'El campo Provincia es obligatorio.',
             'description.required' => 'El campo descripción es obligatorio.',
             'description.max' => [
                 'numeric' => 'El campo descripción no debe ser mayor a :max.',
@@ -170,24 +175,24 @@ class ProvinceController extends Controller
                 'array'   => 'El campo observación no debe contener más de :max elementos.',
             ]
         ]);
-        $count = Province::where('province_id', $id)->count();
+        $count = District::where([['district_id', $id], ['status', true]])->count();
         if ($count>0) {
             # Request
-            $region_id = $request->input('region_id');
+            $province_id = $request->input('province_id');
             $description = $request->input('description');
             $observation = $request->input('observation');
             # Update
-            $record = Province::where('province_id', $id)->first();
+            $record = District::where('district_id', $id)->first();
             $record->user_id = Auth::id();
-            $record->region_id = $region_id;
+            $record->province_id = $province_id;
             $record->description = $description;
             $record->observation = $observation;
             $record->status = 1;
             $record->save();
-            return redirect('/province/edit/'.$id)->with('success', 'Registro Guardado');
+            return redirect('/district/edit/'.$id)->with('success', 'Registro Guardado');
         }else{
             # Error
-            return redirect('/province')->with('info', 'No se puede Editar el registro');
+            return redirect('/district')->with('info', 'No se puede Editar el registro');
         }
     }
 
@@ -199,11 +204,10 @@ class ProvinceController extends Controller
      */
     public function destroy($id)
     {
-        $count = Province::where([['province_id', $id], ['status', true]])->count();
+        $count = District::where([['district_id', $id], ['status', true]])->count();
         if ($count>0) {
             # Destroy
-            Province::where('province_id', $id)->update(['status' => false]);
-            District::where('province_id', $id)->update(['status' => false]);
+            District::where('district_id', $id)->update(['status' => false]);
             return response()->json([
                 'status' => '1',
                 'msg' => 'success'
@@ -215,16 +219,5 @@ class ProvinceController extends Controller
                 'msg' => 'fail'
             ]);
         }
-    }
-
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function getRegionById($region_id)
-    {
-        return Province::where([['region_id', $region_id], ['status', true]])->orderBy('description', 'asc')->get();
     }
 }

@@ -5,13 +5,13 @@
     <div class="container-fluid">
         <div class="row mb-2">
             <div class="col-sm-6">
-                <h1>Provincias</h1>
+                <h1>Distritos</h1>
             </div>
             <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
                     <li class="breadcrumb-item"><a href="{{ url('/home') }}">Dashboard</a></li>
-                    <li class="breadcrumb-item"><a href="{{ url('/province') }}">Provincias</a></li>
-                    <li class="breadcrumb-item active">Editar Provincia</li>
+                    <li class="breadcrumb-item"><a href="{{ url('/district') }}">Distritos</a></li>
+                    <li class="breadcrumb-item active">Crear Distrito</li>
                 </ol>
             </div>
         </div>
@@ -24,14 +24,14 @@
     <div class="card">
         <div class="card-header">
             <div class="row">
-                <h3 class="card-title">Editar Provincia</h3>
+                <h3 class="card-title">Crear Distrito</h3>
             </div>
         </div>
         <div class="card-body">
             @include('layouts.alerts')
             {!! Form::open([
-                'method'=>'PUT',
-                'url' => ['/province/update', $data['row']->province_id],
+                'method'=>'POST',
+                'url' => ['/district/store'],
                 'class' => 'form-horizontal',
                 'role' => 'form',
                 'id' => 'form',
@@ -39,7 +39,7 @@
                 <div class="form-group row mb-3 ">
                     {!! Form::label('region_id', 'Región', ['class' => 'col-3 col-form-label']) !!}
                     <div class="col-9">
-                        {!! Form::select('region_id', $data['region'], $data['row']->region_id, ['placeholder' => 'Seleccione...', 'class' => 'form-control select2']) !!}
+                        {!! Form::select('region_id', $data['region'], old('region_id'), ['placeholder' => 'Seleccione...', 'class' => 'form-control select2']) !!}
                         @if ($errors->has('region_id'))
                             <div class="invalid-feedback">
                                 {{ $errors->first('region_id') }}</li>
@@ -48,9 +48,20 @@
                     </div>
                 </div>
                 <div class="form-group row mb-3 ">
-                    {!! Form::label('description', 'Descripción', ['class' => 'col-3 col-form-label']) !!}
+                    {!! Form::label('province_id', 'Provincia', ['class' => 'col-3 col-form-label']) !!}
                     <div class="col-9">
-                        {!! Form::text('description', $data['row']->description, ['class' => 'form-control', 'placeholder' => 'Descripción']) !!}
+                        {!! Form::select('province_id', [], old('province_id'), ['placeholder' => 'Seleccione...', 'class' => 'form-control select2']) !!}
+                        @if ($errors->has('province_id'))
+                            <div class="invalid-feedback">
+                                {{ $errors->first('province_id') }}</li>
+                            </div>
+                        @endif
+                    </div>
+                </div>
+                <div class="form-group row mb-3 ">
+                    {!! Form::label('description', 'Distrito', ['class' => 'col-3 col-form-label']) !!}
+                    <div class="col-9">
+                        {!! Form::text('description', old('description'), ['class' => 'form-control', 'placeholder' => 'Distrito']) !!}
                         @if ($errors->has('description'))
                             <div class="invalid-feedback">
                                 {{ $errors->first('description') }}</li>
@@ -61,7 +72,7 @@
                 <div class="form-group row mb-3 ">
                     {!! Form::label('observation', 'Observación', ['class' => 'col-3 col-form-label']) !!}
                     <div class="col-9">
-                        {!! Form::text('observation', $data['row']->observation, ['class' => 'form-control', 'placeholder' => 'Observación']) !!}
+                        {!! Form::text('observation', old('observation'), ['class' => 'form-control', 'placeholder' => 'Observación']) !!}
                         @if ($errors->has('observation'))
                             <div class="invalid-feedback">
                                 {{ $errors->first('observation') }}</li>
@@ -73,7 +84,7 @@
         </div>
         <div class="card-footer">
             <button id="btn-submit" type="button" class="btn btn-info"><i class="fa fa-save"></i> Guardar</button>
-            <a href="{{ url('province') }}" class="btn btn-default float-right"><i class="fa fa-undo"></i> Cancelar</a>
+            <a href="{{ url('district') }}" class="btn btn-default float-right"><i class="fa fa-undo"></i> Cancelar</a>
         </div>
         <!-- /.card-body -->
     </div>
@@ -89,11 +100,20 @@
     <script>
         $(document).ready(function() {
             $('#menu-division-politica').addClass('menu-open');
-            $('#item-provincias a').addClass('active');
+            $('#item-distritos a').addClass('active');
             $('.select2').select2({
                 theme: 'bootstrap4',
             });
-            $('#region_id').val('{{ $data["row"]->region_id }}').trigger('change');
+            $('#region_id').on('change', function() {
+                var id = $(this).val();
+                $('#province_id').html('<option value="">Seleccione...</option>');
+                $.get('{{ url("province/getRegionById") }}/'+id, function(data){
+                    for (let i = 0; i < data.length; i++) {
+                        const element = data[i];
+                        $('#province_id').append('<option value="'+element.province_id+'">'+element.description+'</option>');  
+                    }
+                });
+            });
             // Save button
             $('#btn-submit').on('click', function() {
                 submit();
@@ -125,6 +145,9 @@
             }
             @if($errors->has('region_id')) 
                 $('#region_id').addClass('is-invalid'); 
+            @endif
+            @if($errors->has('province_id')) 
+                $('#province_id').addClass('is-invalid'); 
             @endif
             @if($errors->has('description')) 
                 $('#description').addClass('is-invalid'); 

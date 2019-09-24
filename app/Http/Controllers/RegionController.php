@@ -87,7 +87,7 @@ class RegionController extends Controller
      */
     public function show($id)
     {
-        $count = Region::where('region_id', $id)->count();
+        $count = Region::where([['region_id', $id], ['status', true]])->count();
         if ($count>0) {
             # Show
             $data['row'] = Region::where('region_id', $id)->first();
@@ -106,7 +106,7 @@ class RegionController extends Controller
      */
     public function edit($id)
     {
-        $count = Region::where('region_id', $id)->count();
+        $count = Region::where([['region_id', $id], ['status', true]])->count();
         if ($count>0) {
             # Edit
             $data['row'] = Region::where('region_id', $id)->first();
@@ -162,7 +162,7 @@ class RegionController extends Controller
      */
     public function destroy($id)
     {
-        $count = Region::where('region_id', $id)->count();
+        $count = Region::where([['region_id', $id], ['status', true]])->count();
         if ($count>0) {
             # Destroy
             Region::where('region_id', $id)->update(['status' => false]);

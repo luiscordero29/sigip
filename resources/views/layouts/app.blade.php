@@ -202,7 +202,7 @@
 									</a>
                               	</li>
                               	<li id="item-distritos" class="nav-item">
-									<a href="../../index3.html" class="nav-link">
+									<a href="{{ url('district') }}" class="nav-link">
 										<i class="far fa-circle nav-icon"></i>
 										<p>Distritos</p>
 									</a>
